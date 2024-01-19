@@ -1,6 +1,5 @@
 import tensorflow as tf
 import keras as keras
-import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -28,7 +27,7 @@ testing_images = testing_images / 255
 model = keras.models.Sequential([
     keras.layers.Conv2D(64, (3, 3), activation=keras.activations.relu,
                         input_shape=(28, 28, 1)),
-    keras.layers.MaxPooling2D(3, 3),
+    keras.layers.MaxPooling2D(2, 2),
     keras.layers.Conv2D(64, (3, 3), activation=keras.activations.relu,
                         input_shape=(28, 28, 1)),
     keras.layers.MaxPooling2D(2, 2),

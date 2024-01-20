@@ -1,18 +1,17 @@
-import random
-
 import keras
 import numpy as np
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
 
-from Utility import prepare_images_from_zip, image_to_array, random_display_images, visualize_layers
+from Utility import prepare_images_from_zip, image_to_array, random_display_images, show_model_history
 
 # prepare the train dataset
 train_img_dir = './dataset/horse-or-human'
-horse_files, human_files = prepare_images_from_zip('dataset/horse-or-human.zip', train_img_dir)
-
-# random display images
-random_display_images(horse_files, human_files)
+train_horse_files, train_human_files = prepare_images_from_zip('./dataset/horse-or-human.zip', train_img_dir)
+random_display_images(train_horse_files, train_human_files)
+val_img_dir = './dataset/validation-horse-or-human'
+val_horse_files, val_human_files = prepare_images_from_zip('./dataset/validation-horse-or-human.zip', val_img_dir)
+random_display_images(val_horse_files, val_human_files)
 
 # build the model
 model = keras.models.Sequential([
@@ -45,25 +44,31 @@ print(model.summary())
 model.compile(loss=keras.losses.binary_crossentropy, optimizer=keras.optimizers.RMSprop(learning_rate=0.001),
               metrics=['accuracy'])
 
-# generator
+# train generator
 train_generator = ImageDataGenerator(rescale=1. / 255).flow_from_directory(
     train_img_dir,
     target_size=(300, 300),  # all images will be resized to 300*300
-    batch_size=128,
+    batch_size=20,
     class_mode='binary'  # human or horse, so binary
 )
 print(train_generator)
 
-# train the model
-history = model.fit(train_generator, steps_per_epoch=8, epochs=15, verbose=1)
+# validation generator
+val_generator = ImageDataGenerator(rescale=1. / 255).flow_from_directory(
+    val_img_dir,
+    target_size=(300, 300),  # all images will be resized to 300*300
+    batch_size=20,
+    class_mode='binary'  # human or horse, so binary
+)
+print(val_generator)
 
-# prepare predict data
+# train the model
+history = model.fit(train_generator, steps_per_epoch=8, epochs=15, verbose=1, validation_data=val_generator,
+                    validation_steps=8)
+
 predict_imgs = np.vstack((image_to_array('./dataset/predict_horse.jpg'), image_to_array('./dataset/predict_human.jpg')))
 classes = model.predict(predict_imgs, batch_size=10)
 print(f'Predict probability: {classes}')
 print(f"Readable result: {['Human' if c[0] > 0.5 else 'Horse' for c in classes]}")
 
-max_features_in_cnn_layers = 64
-
-# visualize the CNN layers
-visualize_layers(model, random.choice(horse_files + human_files), 64)
+show_model_history(history)

@@ -81,7 +81,7 @@ print(train_generator)
 
 
 # train the model
-history = model.fit(train_generator, steps_per_epoch=8, epochs=15, verbose=1)
+# history = model.fit(train_generator, steps_per_epoch=8, epochs=15, verbose=1)
 
 
 # prepare predict data
@@ -107,7 +107,7 @@ plt.show()
 successive_feature_maps = visualization_model.predict(img)
 layer_names = [layer.name for layer in model.layers]
 max_features_in_cnn_layers = 64
-f, axs = plt.subplots(len(layer_names), max_features_in_cnn_layers, figsize=(50, len(layer_names)))
+f, axs = plt.subplots(len(layer_names)-3, max_features_in_cnn_layers, figsize=(100, len(layer_names))) # 3 DNN layers won;'t be painted
 for layer_idx, layer_name, feature_map in zip(range(len(layer_names)), layer_names, successive_feature_maps):
     if len(feature_map.shape) == 4:
         # just do this for the conv/max pool layers, not the fully-connected layers

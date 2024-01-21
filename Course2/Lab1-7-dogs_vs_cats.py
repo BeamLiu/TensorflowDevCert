@@ -3,6 +3,7 @@ import os
 import keras
 import numpy as np
 import tensorflow as tf
+from keras.preprocessing import image
 from keras.preprocessing.image import ImageDataGenerator
 from Utility import show_model_history, prepare_images_from_zip, random_display_images, image_to_array, visualize_layers
 
@@ -67,14 +68,24 @@ model.compile(loss=keras.losses.binary_crossentropy, optimizer=keras.optimizers.
               metrics=['accuracy'])
 
 # train the model
-history = model.fit(train_generator, steps_per_epoch=100, epochs=15, verbose=1, validation_data=val_generator,
+history = model.fit(train_generator, steps_per_epoch=10, epochs=50, verbose=1, validation_data=val_generator,
                     validation_steps=8)
 
-predit_imgs = os.listdir('./dataset/prediction')
-print(f'Predit images: {predit_imgs}')
-classes = model.predict(np.array([image_to_array(os.path.join('./dataset/prediction', img)) for img in predit_imgs]))
-print(f'Predict probability: {classes}')
-print(f"Readable result: {['Cat' if c[0] > 0.5 else 'Dog' for c in classes]}")
+for img in os.listdir('./dataset/prediction'):
+    print(f'for input {img}')
+    img = image.load_img(os.path.join('./dataset/prediction', img), target_size=(150, 150))
+    x = image.img_to_array(img)
+    x /= 255
+    x = np.expand_dims(x, axis=0)
+    images = np.vstack([x])
+
+    classes = model.predict(images)
+    print(classes)
+    if classes[0] > 0.5:
+        print('dog')
+    else:
+        print('cat')
+
 show_model_history(history)
 
 visualize_layers(model, './dataset/prediction/cat-2.png', 64)

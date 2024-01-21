@@ -22,9 +22,6 @@ model = keras.models.Sequential([
     # the second convolution
     keras.layers.Conv2D(32, (3, 3), activation=keras.activations.relu),
     keras.layers.MaxPooling2D(2, 2),
-    # the second convolution
-    keras.layers.Conv2D(64, (3, 3), activation=keras.activations.relu),
-    keras.layers.MaxPooling2D(2, 2),
     # the third convolution
     keras.layers.Conv2D(64, (3, 3), activation=keras.activations.relu),
     keras.layers.MaxPooling2D(2, 2),

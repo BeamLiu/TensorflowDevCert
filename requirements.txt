@@ -2,3 +2,4 @@ tensorflow==2.15.0
 matplotlib==3.7.1
 scipy==1.11.4
 pooch==v1.8.0
+tensorflow_datasets==4.9.4

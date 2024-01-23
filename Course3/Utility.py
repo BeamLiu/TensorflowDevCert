@@ -59,25 +59,36 @@ def random_display_images(dog_files: array, cat_files: array):
     plt.show()
 
 
-def show_model_history(history: History):
+def show_model_history(history: History, name=None):
+    # Extracting accuracy and loss values from history
     acc = history.history['accuracy']
     loss = history.history['loss']
     val_acc = history.history['val_accuracy']
     val_loss = history.history['val_loss']
     epochs = range(len(acc))
-    # display the  accuracy
-    plt.plot(epochs, acc, label='train acc')
-    plt.plot(epochs, val_acc, label='validation acc')
-    plt.title('Train v.s. Validation accuracy')
+
+    # Display accuracy and loss in two columns
+    plt.figure(figsize=(12, 6))
+
+    # Plot accuracy
+    plt.subplot(1, 2, 1)
+    plt.plot(epochs, acc, label='Train Accuracy')
+    plt.plot(epochs, val_acc, label='Validation Accuracy')
+    plt.title(f'Train vs. Validation Accuracy {"(" + name + ")" if name is not None else ""}')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
     plt.legend(loc='upper right')
-    plt.figure()
-    plt.show()
-    # display the  loss
-    plt.plot(epochs, loss, label='train loss')
-    plt.plot(epochs, val_loss, label='validation loss')
-    plt.title('Train v.s. Validation loss')
+
+    # Plot loss
+    plt.subplot(1, 2, 2)
+    plt.plot(epochs, loss, label='Train Loss')
+    plt.plot(epochs, val_loss, label='Validation Loss')
+    plt.title(f'Train vs. Validation Loss {"(" + name + ")" if name is not None else ""}')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
     plt.legend(loc='upper right')
-    plt.figure()
+
+    plt.tight_layout()
     plt.show()
 
 

@@ -32,7 +32,8 @@ for s, l in test_data:
 
 vocab_size = 10000
 max_len = 120
-embedding_len = 32
+embedding_len = 16
+epochs = 20
 tokenizer = Tokenizer(num_words=vocab_size, oov_token='<OOV>')
 tokenizer.fit_on_texts(training_sentences)
 
@@ -44,34 +45,44 @@ testing_sequenes = tokenizer.texts_to_sequences(testing_sentences)
 testing_padded = pad_sequences(testing_sequenes, maxlen=max_len)
 print(f'testing data size: {len(testing_sequenes)}')
 
-model = keras.Sequential([
+
+def try_model(model, name):
+    model.compile(loss=keras.losses.binary_crossentropy, optimizer=keras.optimizers.Adam(), metrics=['accuracy'])
+    print(model.summary())
+    history = model.fit(training_padded, np.array(training_labels), epochs=epochs, verbose=1,
+                        validation_data=(testing_padded, np.array(testing_labels)))
+    show_model_history(history, name)
+
+
+embedding_model = keras.Sequential([
     keras.layers.Embedding(vocab_size, embedding_len, input_length=max_len),
     keras.layers.Flatten(),
     keras.layers.Dense(6, activation=keras.activations.relu),
     keras.layers.Dense(1, activation=keras.activations.sigmoid)
 ])
+try_model(embedding_model, 'Embedding')
 
-model.compile(loss=keras.losses.binary_crossentropy, optimizer=keras.optimizers.Adam(), metrics=['accuracy'])
+gru_model = keras.Sequential([
+    keras.layers.Embedding(vocab_size, embedding_len, input_length=max_len),
+    keras.layers.Bidirectional(keras.layers.GRU(32)),
+    keras.layers.Dense(6, activation=keras.activations.relu),
+    keras.layers.Dense(1, activation=keras.activations.sigmoid)
+])
+try_model(gru_model, 'GRU')
 
-print(model.summary())
+lstm_model = keras.Sequential([
+    keras.layers.Embedding(vocab_size, embedding_len, input_length=max_len),
+    keras.layers.Bidirectional(keras.layers.LSTM(64)),
+    keras.layers.Dense(6, activation=keras.activations.relu),
+    keras.layers.Dense(1, activation=keras.activations.sigmoid)
+])
+try_model(lstm_model, 'LSTM')
 
-history = model.fit(training_padded, np.array(training_labels), epochs=10, verbose=1,
-                    validation_data=(testing_padded, np.array(testing_labels)))
-
-show_model_history(history)
-
-# show the embeddings
-embedding_layer = model.layers[0]
-embedding_weights = embedding_layer.get_weights()[0]
-print(embedding_weights)
-
-# output tsv
-with io.open('vecs.tsv', 'w', encoding='utf-8') as out_v:
-    with io.open('meta.tsv', 'w', encoding='utf-8') as out_m:
-        for word_num in range(1, vocab_size):
-            word_name = tokenizer.index_word.get(word_num)
-            word_embedding = embedding_weights[word_num]
-            out_m.write(word_name + '\n')
-            out_v.write('\t'.join([str(x) for x in word_embedding]) + '\n')
-
-print('please manully go to https://projector.tensorflow.org/ to visualize the tsv files!')
+lstm_model = keras.Sequential([
+    keras.layers.Embedding(vocab_size, embedding_len, input_length=max_len),
+    keras.layers.Bidirectional(keras.layers.LSTM(64)),
+    keras.layers.LSTM(32),
+    keras.layers.Dense(6, activation=keras.activations.relu),
+    keras.layers.Dense(1, activation=keras.activations.sigmoid)
+])
+try_model(lstm_model, 'Two LSTM')

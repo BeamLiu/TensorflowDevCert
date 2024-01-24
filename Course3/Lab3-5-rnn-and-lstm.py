@@ -77,12 +77,3 @@ lstm_model = keras.Sequential([
     keras.layers.Dense(1, activation=keras.activations.sigmoid)
 ])
 try_model(lstm_model, 'LSTM')
-
-lstm_model = keras.Sequential([
-    keras.layers.Embedding(vocab_size, embedding_len, input_length=max_len),
-    keras.layers.Bidirectional(keras.layers.LSTM(64)),
-    keras.layers.LSTM(32),
-    keras.layers.Dense(6, activation=keras.activations.relu),
-    keras.layers.Dense(1, activation=keras.activations.sigmoid)
-])
-try_model(lstm_model, 'Two LSTM')

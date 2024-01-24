@@ -63,8 +63,10 @@ def show_model_history(history: History, name=None):
     # Extracting accuracy and loss values from history
     acc = history.history['accuracy']
     loss = history.history['loss']
-    val_acc = history.history['val_accuracy']
-    val_loss = history.history['val_loss']
+    has_val = 'val_accuracy' in history.history
+    if has_val:
+        val_acc = history.history['val_accuracy']
+        val_loss = history.history['val_loss']
     epochs = range(len(acc))
 
     # Display accuracy and loss in two columns
@@ -73,8 +75,11 @@ def show_model_history(history: History, name=None):
     # Plot accuracy
     plt.subplot(1, 2, 1)
     plt.plot(epochs, acc, label='Train Accuracy')
-    plt.plot(epochs, val_acc, label='Validation Accuracy')
-    plt.title(f'Train vs. Validation Accuracy {"(" + name + ")" if name is not None else ""}')
+    if has_val:
+        plt.plot(epochs, val_acc, label='Validation Accuracy')
+        plt.title(f'Train vs. Validation Accuracy {"(" + name + ")" if name is not None else ""}')
+    else:
+        plt.title(f'Train Accuracy {"(" + name + ")" if name is not None else ""}')
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend(loc='upper right')
@@ -82,8 +87,11 @@ def show_model_history(history: History, name=None):
     # Plot loss
     plt.subplot(1, 2, 2)
     plt.plot(epochs, loss, label='Train Loss')
-    plt.plot(epochs, val_loss, label='Validation Loss')
-    plt.title(f'Train vs. Validation Loss {"(" + name + ")" if name is not None else ""}')
+    if has_val:
+        plt.plot(epochs, val_loss, label='Validation Loss')
+        plt.title(f'Train vs. Validation Loss {"(" + name + ")" if name is not None else ""}')
+    else:
+        plt.title(f'Train Loss {"(" + name + ")" if name is not None else ""}')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend(loc='upper right')

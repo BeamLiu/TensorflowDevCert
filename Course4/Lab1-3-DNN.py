@@ -25,7 +25,7 @@ model = keras.models.Sequential([
 print(model.summary())
 
 model.compile(loss=keras.losses.mse, optimizer=keras.optimizers.SGD(learning_rate=7e-6, momentum=0.9),
-              metrics=['accuracy'])
+              metrics=['mae'])
 lr_schedule = keras.callbacks.LearningRateScheduler(
     lambda epoch: 1e-8 * 10 ** (epoch / 20)
 )

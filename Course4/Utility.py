@@ -38,7 +38,6 @@ def prepare_timeseries_data():
     time = np.arange(4 * 365 + 1, dtype="float32")
     series = trend(time, 0.1)
     plot_series(time, series)
-    plt.show()
     baseline = 10
     amplitude = 40
     slope = 0.01
@@ -102,27 +101,27 @@ def window_dataset(series, window_size, batch_size, shuffle_size):
 
 def show_model_history(history: History, name=None):
     # Extracting accuracy and loss values from history
-    acc = history.history['accuracy']
+    mae = history.history['mae']
     loss = history.history['loss']
-    has_val = 'val_accuracy' in history.history
+    has_val = 'val_mae' in history.history
     if has_val:
-        val_acc = history.history['val_accuracy']
+        val_mae = history.history['val_mae']
         val_loss = history.history['val_loss']
-    epochs = range(len(acc))
+    epochs = range(len(mae))
 
     # Display accuracy and loss in two columns
     plt.figure(figsize=(12, 6))
 
     # Plot accuracy
     plt.subplot(1, 2, 1)
-    plt.plot(epochs, acc, label='Train Accuracy')
+    plt.plot(epochs, mae, label='Train MAE')
     if has_val:
-        plt.plot(epochs, val_acc, label='Validation Accuracy')
-        plt.title(f'Train vs. Validation Accuracy {"(" + name + ")" if name is not None else ""}')
+        plt.plot(epochs, val_mae, label='Validation MAE')
+        plt.title(f'Train vs. Validation MAE {"(" + name + ")" if name is not None else ""}')
     else:
-        plt.title(f'Train Accuracy {"(" + name + ")" if name is not None else ""}')
+        plt.title(f'Train MAE {"(" + name + ")" if name is not None else ""}')
     plt.xlabel('Epochs')
-    plt.ylabel('Accuracy')
+    plt.ylabel('MAE')
     plt.legend(loc='upper right')
 
     # Plot loss

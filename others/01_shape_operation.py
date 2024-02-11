@@ -100,3 +100,34 @@ def np_operation():
 
 tf_operation()
 np_operation()
+
+def tf_concat_split_stack():
+    a = tf.reshape(tf.range(0, 50), (2, 5, 5))
+    b = tf.reshape(tf.range(0, 25), (1, 5, 5))
+    c = tf.concat((a, b), axis=0)
+    assert c.shape == (3, 5, 5)
+    (x1, x2) = tf.split(c, axis=0, num_or_size_splits=[2, 1])
+    assert x1.shape == (2, 5, 5)
+    assert x2.shape == (1, 5, 5)
+
+    a = tf.reshape(tf.range(0, 50), (2, 5, 5))
+    b = tf.reshape(tf.range(0, 50), (2, 5, 5))
+    c = tf.stack((a, b))
+    assert c.shape == (2, 2, 5, 5)
+
+def np_concat_split_stack():
+    a = np.reshape(range(0, 50), (2, 5, 5))
+    b = np.reshape(range(0, 25), (1, 5, 5))
+    c = np.concatenate((a, b), axis=0)
+    assert c.shape == (3, 5, 5)
+    x = np.split(c, axis=0, indices_or_sections=[2, 1])
+    assert x[0].shape == (2, 5, 5)
+    assert x[1].shape == (0, 5, 5)
+
+    a = np.reshape(range(0, 50), (2, 5, 5))
+    b = np.reshape(range(0, 50), (2, 5, 5))
+    c = np.stack((a, b))
+    assert c.shape == (2, 2, 5, 5)
+
+tf_concat_split_stack()
+np_concat_split_stack()
